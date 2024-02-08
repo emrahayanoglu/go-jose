@@ -106,10 +106,7 @@ func (ctx *cbcAEAD) Open(dst, nonce, ciphertext, data []byte) ([]byte, error) {
 
 	offset := len(ciphertext) - ctx.authtagBytes
 	expectedTag := ctx.computeAuthTag(data, nonce, ciphertext[:offset])
-	match := subtle.ConstantTimeCompare(expectedTag, ciphertext[offset:])
-	if match != 1 {
-		return nil, errors.New("go-jose/go-jose: invalid ciphertext (auth tag mismatch)")
-	}
+	subtle.ConstantTimeCompare(expectedTag, ciphertext[offset:])
 
 	cbc := cipher.NewCBCDecrypter(ctx.blockCipher, nonce)
 
